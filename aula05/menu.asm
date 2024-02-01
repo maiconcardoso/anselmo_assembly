@@ -26,9 +26,43 @@ section .text
 global _start
 
 _start:
+; Mostrar o título 
     mov ecx, tit
     call mst_saida
 
+; Mostrar opções
+    mov ecx, opc1
+    call mst_saida
+
+    mov ecx, opc2
+    call mst_saida
+
+    mov ecx, opc3
+    call mst_saida
+
+    mov ecx, opc4
+    call mst_saida  
+
+; Obter opções
+    mov ECX, msgOpc
+    call mst_saida
+    mov eax, SYS_READ
+    mov ebx, STD_IN
+    mov ecx, opc
+    mov edx, 0x2
+    int SYS_CALL 
+
+; Converter o valor e se dirigir para o ponto correto
+    mov ah, [opc]
+    sub ah, '0'
+
+; Verificar valor das opções
+    cmp ah, 4
+    jg mstErro
+    cmp ah, 1
+    jl mstErro
+
+; Obter valores 
     mov ECX, obVal1
     call mst_saida
     mov eax, SYS_READ
@@ -45,28 +79,6 @@ _start:
     mov edx, 0x3
     int SYS_CALL
 
-    mov ecx, opc1
-    call mst_saida
-
-    mov ecx, opc2
-    call mst_saida
-
-    mov ecx, opc3
-    call mst_saida
-
-    mov ecx, opc4
-    call mst_saida    
-
-    mov ECX, msgOpc
-    call mst_saida
-    mov eax, SYS_READ
-    mov ebx, STD_IN
-    mov ecx, opc
-    mov edx, 0x2
-    int SYS_CALL
-
-    mov ah, [opc]
-    sub ah, '0'
 
     cmp ah, 1
     je adicionar
@@ -80,10 +92,8 @@ _start:
     cmp ah, 4
     je dividir
 
-    mov ecx, msgErro
-    call mst_saida
-    jmp saida
 
+; Comandos para executar as equações
 adicionar:
     mov ecx, p1
     call mst_saida
@@ -102,10 +112,15 @@ dividir:
     call mst_saida
     jmp saida
 
+mstErro:
+    mov ecx, msgErro
+    call mst_saida
+    jmp saida
+
 saida:
 
-    call msgFim
-    jmp saida
+    mov ecx, msgFim
+    call mst_saida
 
     mov eax, SYS_EXIT
     mov ebx, RET_EXIT
